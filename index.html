@@ -27,6 +27,11 @@
       line-height: 1.25;
     }
 
+    .builder-meta { 
+      font-size: 12px; 
+      color: #666; 
+      margin: 0px 0 12px;
+    }
     .app {
       display: flex;
       align-items: flex-start;
@@ -51,7 +56,7 @@
     }
 
     .form-panel h2 {
-      margin: 0 0 14px;
+      margin: 0 0 4px;
       font-size: 22px;
     }
 
@@ -208,6 +213,50 @@
       margin: 2px 0;
     }
 
+    .education-card {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 12px;
+      background: #fafafa;
+    }
+
+    .education-card h3 {
+      margin: 0 0 10px;
+      font-size: 14px;
+    }
+
+    .education-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .education-grid .form-group {
+      margin-bottom: 0;
+    }
+
+    .education-grid .full-width {
+      grid-column: 1 / -1;
+    }
+
+    .education-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 10px;
+    }
+
+    .education-empty {
+      font-size: 14px;
+      color: #666;
+      font-style: italic;
+    }
+
+    .entry-details {
+      font-size: 14px;
+      margin: 4px 0 0;
+    }
+
     .hint {
       margin-top: 8px;
       font-size: 12px;
@@ -268,62 +317,73 @@
   <div class="app">
     <aside class="form-panel">
       <h2>Academic CV Builder</h2>
+      <div class="builder-meta">Created by 北欧少女莫小贝 · v1.0</div>
 
       <div class="form-group">
         <label for="nameInput">Name</label>
-        <input id="nameInput" type="text" value="YOUR NAME" />
+        <input id="nameInput" type="text" value="XIAOBEI MO" />
       </div>
 
       <div class="form-group">
-        <label for="contact1Input">Contact line 1</label>
-        <input id="contact1Input" type="text" value="Street Address, City, State ZIP" />
+        <label for="contact1Input">Address</label>
+        <input id="contact1Input" type="text" value="Street Address, Postcode City, Country" />
       </div>
 
       <div class="form-group">
-        <label for="contact2Input">Contact line 2</label>
+        <label for="contact2Input">Contact (Phone | Email)</label>
         <input id="contact2Input" type="text" value="(123) 456-7890 | your.email@example.com" />
       </div>
 
       <div class="form-group">
-        <label for="contact3Input">Contact line 3</label>
-        <input id="contact3Input" type="text" value="LinkedIn / GitHub / Website" />
+        <label for="contact3Input">Websites</label>
+        <input id="contact3Input" type="text" value="GitHub (https://github.com/yourname) | LinkedIn (https://linkedin.com/in/yourname)" />
       </div>
 
       <div class="form-group">
-        <label for="profileInput">Profile</label>
-        <textarea id="profileInput">Write a short academic profile here.</textarea>
+        <label for="profileInput">Profile (Optional)</label>
+        <textarea id="profileInput">Master’s graduate in Computer Science with a strong background in machine learning, data analysis, and scientific computing. Experienced in developing research-oriented software and working with complex datasets. Interested in pursuing a PhD to advance research in AI-driven modeling and data-intensive systems.</textarea>
       </div>
 
+      <div class="form-group">
+        <label>Education</label>
+        <div id="educationEditor"></div>
+        <div class="button-row">
+          <button type="button" class="secondary" id="addEducationBtn">+ Add Education</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Research Experience</label>
+        <div id="researchEditor"></div>
+        <div class="button-row">
+          <button type="button" class="secondary" id="addResearchBtn">+ Add Research</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Teaching Experience</label>
+        <div id="teachingEditor"></div>
+        <div class="button-row">
+          <button type="button" class="secondary" id="addTeachingBtn">+ Add Teaching</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="publicationsInput">Publications (one per line)</label>
+        <textarea id="publicationsInput">X. Mo and X. Tong, “Title of article,” Journal Name, 2025.
+X. Mo and X. Tong, “Title of conference paper,” in Conference Name, 2024.</textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="awardsInput">Awards (one per line)</label>
+        <textarea id="awardsInput">Scholarship Name, 2024
+Best Student Paper Award, 2023</textarea>
+      </div>
       <div class="form-group">
         <label for="skillsInput">Skills (one per line)</label>
         <textarea id="skillsInput">Programming: Python, MATLAB, R
 Tools: Linux, Git, LaTeX
-Languages: English, Chinese</textarea>
-      </div>
-
-      <div class="form-group">
-        <label for="eduSchoolInput">Education: University</label>
-        <input id="eduSchoolInput" type="text" value="University Name" />
-      </div>
-
-      <div class="form-group">
-        <label for="eduLocationInput">Education: Location</label>
-        <input id="eduLocationInput" type="text" value="City, Country" />
-      </div>
-
-      <div class="form-group">
-        <label for="eduDegreeInput">Education: Degree</label>
-        <input id="eduDegreeInput" type="text" value="Master of Science in Subject" />
-      </div>
-
-      <div class="form-group">
-        <label for="eduYearInput">Education: Years</label>
-        <input id="eduYearInput" type="text" value="2022–2024" />
-      </div>
-
-      <div class="form-group">
-        <label for="eduDetailsInput">Education: Details</label>
-        <textarea id="eduDetailsInput">Relevant coursework: Machine Learning, Statistics, Scientific Computing</textarea>
+Languages: English (fluent), Chinese (native)</textarea>
       </div>
 
       <div class="button-row">
@@ -342,88 +402,39 @@ Languages: English, Chinese</textarea>
       <div class="page" id="cvPage">
         <header class="header">
           <h1 class="name" id="previewName">YOUR NAME</h1>
-          <div class="contact-line" id="previewContact1">Street Address, City, State ZIP</div>
+          <div class="contact-line" id="previewContact1">Street Address, City, Country Postcode</div>
           <div class="contact-line" id="previewContact2">(123) 456-7890 | your.email@example.com</div>
-          <div class="contact-line" id="previewContact3">LinkedIn / GitHub / Website</div>
+          <div class="contact-line" id="previewContact3">GitHub (https://github.com/yourname) | LinkedIn (https://linkedin.com/in/yourname)</div>
         </header>
 
-        <section class="section">
+        <section class="section" id="profileSection">
           <div class="section-title">Profile</div>
-          <p id="previewProfile">Write a short academic profile here.</p>
+          <p id="previewProfile">Master’s graduate in Computer Science with a strong background in machine learning, data analysis, and scientific computing. Experienced in developing research-oriented software and working with complex datasets. Interested in pursuing a PhD to advance research in AI-driven modeling and data-intensive systems.</p>
         </section>
 
         <section class="section">
           <div class="section-title">Education</div>
-
-          <div class="entry">
-            <div class="entry-top">
-              <div class="entry-left" id="previewEduSchool">University Name</div>
-              <div class="entry-right" id="previewEduLocation">City, Country</div>
-            </div>
-            <div class="entry-sub">
-              <div id="previewEduDegree">Master of Science in Subject</div>
-              <div id="previewEduYear">2022–2024</div>
-            </div>
-            <p id="previewEduDetails">Relevant coursework: Machine Learning, Statistics, Scientific Computing</p>
-          </div>
-
-          <div class="entry">
-            <div class="entry-top">
-              <div class="entry-left">Another University</div>
-              <div class="entry-right">City, Country</div>
-            </div>
-            <div class="entry-sub">
-              <div>Bachelor of Science in Subject</div>
-              <div>2018–2022</div>
-            </div>
-          </div>
+          <div id="previewEducation"></div>
         </section>
 
         <section class="section">
           <div class="section-title">Research Experience</div>
-
-          <div class="entry">
-            <div class="entry-top">
-              <div class="entry-left">Research Assistant, Lab or Project Name</div>
-              <div class="entry-right">2024–Present</div>
-            </div>
-            <div class="entry-sub">
-              <div>Department / University</div>
-              <div>City, Country</div>
-            </div>
-            <ul class="compact">
-              <li>Studied topic X using method Y.</li>
-              <li>Analyzed data from Z and developed scripts for processing and visualization.</li>
-              <li>Collaborated with researchers on experiment design and reporting.</li>
-            </ul>
-          </div>
+          <div id="previewResearch"></div>
         </section>
 
         <section class="section">
           <div class="section-title">Teaching Experience</div>
-
-          <div class="entry">
-            <div class="entry-top">
-              <div class="entry-left">Teaching Assistant, Course Title</div>
-              <div class="entry-right">Spring 2023</div>
-            </div>
-            <div class="entry-sub">
-              <div>University Name</div>
-              <div>City, Country</div>
-            </div>
-            <ul class="compact">
-              <li>Led tutorials and answered student questions.</li>
-              <li>Supported grading and course administration.</li>
-            </ul>
-          </div>
+          <div id="previewTeaching"></div>
         </section>
 
         <section class="section">
           <div class="section-title">Publications</div>
-          <ul class="simple-list">
-            <li>Author, A., Author, B. (2025). Title of article. <em>Journal Name</em>.</li>
-            <li>Author, A. (2024). Title of conference paper. <em>Conference Name</em>.</li>
-          </ul>
+          <ul class="simple-list" id="previewPublications"></ul>
+        </section>
+
+        <section class="section">
+          <div class="section-title">Awards</div>
+          <ul class="simple-list" id="previewAwards"></ul>
         </section>
 
         <section class="section">
@@ -431,15 +442,7 @@ Languages: English, Chinese</textarea>
           <ul class="simple-list" id="previewSkills">
             <li>Programming: Python, MATLAB, R</li>
             <li>Tools: Linux, Git, LaTeX</li>
-            <li>Languages: English, Chinese</li>
-          </ul>
-        </section>
-
-        <section class="section">
-          <div class="section-title">Awards</div>
-          <ul class="simple-list">
-            <li>Scholarship Name, 2024</li>
-            <li>Best Student Paper Award, 2023</li>
+            <li>Languages: English (fluent), Chinese (native)</li>
           </ul>
         </section>
       </div>
@@ -448,20 +451,59 @@ Languages: English, Chinese</textarea>
 
   <script>
     const defaults = {
-      name: "YOUR NAME",
-      contact1: "Street Address, City, State ZIP",
+      name: "XIAOBEI MO",
+      contact1: "Street Address, Postcode City, Country",
       contact2: "(123) 456-7890 | your.email@example.com",
-      contact3: "LinkedIn / GitHub / Website",
-      profile: "Write a short academic profile here.",
+      contact3: "GitHub (https://github.com/yourname) | LinkedIn (https://linkedin.com/in/yourname)",
+      profile: "Master’s graduate in Computer Science with a strong background in machine learning, data analysis, and scientific computing. Experienced in developing research-oriented software and working with complex datasets. Interested in pursuing a PhD to advance research in AI-driven modeling and data-intensive systems.",
       skills: `Programming: Python, MATLAB, R
 Tools: Linux, Git, LaTeX
-Languages: English, Chinese`,
-      eduSchool: "University Name",
-      eduLocation: "City, Country",
-      eduDegree: "Master of Science in Subject",
-      eduYear: "2022–2024",
-      eduDetails: "Relevant coursework: Machine Learning, Statistics, Scientific Computing"
+Languages: English (fluent), Chinese (native)`,
+      education: [
+        {
+          school: "Clayton University",
+          location: "City, Country",
+          degree: "MSc in Computer Science",
+          year: "2022–2024",
+          thesis: "WulinGPT: A Domain-Specific LLM for Martial Arts Culture",
+          details: "Relevant coursework: Machine Learning, Statistics, Scientific Computing"
+        },
+        {
+          school: "Clayton University",
+          location: "City, Country",
+          degree: "BSc in Computer Science",
+          year: "2018–2022",
+          thesis: "Title of thesis",
+        details: ""
+        }
+      ],
+      research: [
+        {
+          title: "Project Name",
+          year: "2022–2024",
+          institution: "Department, University",
+          location: "City, Country",
+          details: "Studied topic X using method Y.\nAnalyzed data from Z and developed scripts for processing and visualization.\nCollaborated with researchers on experiment design and reporting."
+        }
+      ],
+      teaching: [
+        {
+          title: "Teaching Assistant, Course Title",
+          year: "Spring 2023",
+          institution: "Clayton University",
+          location: "City, Country",
+          details: "Led tutorials and answered student questions.\nSupported grading and course administration."
+        }
+      ],
+      publications: `X. Mo and X. Tong, “Title of article,” Journal Name, 2025.
+X. Mo and X. Tong, “Title of conference paper,” in Conference Name, 2024.`,
+      awards: `Scholarship Name, 2024
+Best Student Paper Award, 2023`
     };
+
+    let educationItems = defaults.education.map(item => ({ ...item }));
+    let researchItems = defaults.research.map(item => ({ ...item }));
+    let teachingItems = defaults.teaching.map(item => ({ ...item }));
 
     const nameInput = document.getElementById("nameInput");
     const contact1Input = document.getElementById("contact1Input");
@@ -469,11 +511,14 @@ Languages: English, Chinese`,
     const contact3Input = document.getElementById("contact3Input");
     const profileInput = document.getElementById("profileInput");
     const skillsInput = document.getElementById("skillsInput");
-    const eduSchoolInput = document.getElementById("eduSchoolInput");
-    const eduLocationInput = document.getElementById("eduLocationInput");
-    const eduDegreeInput = document.getElementById("eduDegreeInput");
-    const eduYearInput = document.getElementById("eduYearInput");
-    const eduDetailsInput = document.getElementById("eduDetailsInput");
+    const educationEditor = document.getElementById("educationEditor");
+    const addEducationBtn = document.getElementById("addEducationBtn");
+    const researchEditor = document.getElementById("researchEditor");
+    const addResearchBtn = document.getElementById("addResearchBtn");
+    const teachingEditor = document.getElementById("teachingEditor");
+    const addTeachingBtn = document.getElementById("addTeachingBtn");
+    const publicationsInput = document.getElementById("publicationsInput");
+    const awardsInput = document.getElementById("awardsInput");
 
     const previewName = document.getElementById("previewName");
     const previewContact1 = document.getElementById("previewContact1");
@@ -481,14 +526,28 @@ Languages: English, Chinese`,
     const previewContact3 = document.getElementById("previewContact3");
     const previewProfile = document.getElementById("previewProfile");
     const previewSkills = document.getElementById("previewSkills");
-    const previewEduSchool = document.getElementById("previewEduSchool");
-    const previewEduLocation = document.getElementById("previewEduLocation");
-    const previewEduDegree = document.getElementById("previewEduDegree");
-    const previewEduYear = document.getElementById("previewEduYear");
-    const previewEduDetails = document.getElementById("previewEduDetails");
+    const previewEducation = document.getElementById("previewEducation");
+    const previewResearch = document.getElementById("previewResearch");
+    const previewTeaching = document.getElementById("previewTeaching");
+    const previewPublications = document.getElementById("previewPublications");
+    const previewAwards = document.getElementById("previewAwards");
 
     function updateText(inputEl, previewEl, fallback) {
       previewEl.textContent = inputEl.value.trim() || fallback;
+    }
+
+    function formatLinks(text) {
+      const parts = text.split("|").map(part => part.trim()).filter(part => part !== "");
+
+      return parts.map(part => {
+        const match = part.match(/^(.+?)\s*\((https?:\/\/.+)\)$/);
+        if (match) {
+          const label = match[1].trim();
+          const url = match[2].trim();
+          return `<a href="${url}" target="_blank" rel="noopener noreferrer">${label}</a>`;
+        }
+        return part;
+      }).join(" | ");
     }
 
     function updateSkills() {
@@ -503,18 +562,358 @@ Languages: English, Chinese`,
       });
     }
 
+    function escapeHtml(text) {
+      return String(text)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
+    }
+
+    function renderEducationEditor() {
+      educationEditor.innerHTML = "";
+
+      educationItems.forEach((item, index) => {
+        const card = document.createElement("div");
+        card.className = "education-card";
+        card.innerHTML = `
+          <h3>Education ${index + 1}</h3>
+          <div class="education-grid">
+            <div class="form-group">
+              <label>University</label>
+              <input type="text" data-index="${index}" data-field="school" value="${escapeHtml(item.school)}" />
+            </div>
+            <div class="form-group">
+              <label>Location</label>
+              <input type="text" data-index="${index}" data-field="location" value="${escapeHtml(item.location)}" />
+            </div>
+            <div class="form-group">
+              <label>Degree</label>
+              <input type="text" data-index="${index}" data-field="degree" value="${escapeHtml(item.degree)}" />
+            </div>
+            <div class="form-group">
+              <label>Years</label>
+              <input type="text" data-index="${index}" data-field="year" value="${escapeHtml(item.year)}" />
+            </div>
+            <div class="form-group full-width">
+              <label>Thesis</label>
+              <input type="text" data-index="${index}" data-field="thesis" placeholder="Title of thesis" value="${escapeHtml(item.thesis || "")}" />
+            </div>
+            <div class="form-group full-width">
+              <label>Details (Optional)</label>
+              <textarea data-index="${index}" data-field="details">${escapeHtml(item.details)}</textarea>
+            </div>
+          </div>
+          <div class="education-actions">
+            <button type="button" class="secondary remove-education-btn" data-index="${index}">Remove</button>
+          </div>
+        `;
+        educationEditor.appendChild(card);
+      });
+
+      const removeButtons = educationEditor.querySelectorAll(".remove-education-btn");
+      removeButtons.forEach(button => {
+        button.addEventListener("click", function () {
+          const index = Number(this.dataset.index);
+          educationItems.splice(index, 1);
+          renderEducationEditor();
+          updatePreview();
+      
+        });
+      });
+
+      const inputs = educationEditor.querySelectorAll("input[data-field], textarea[data-field]");
+      inputs.forEach(input => {
+        input.addEventListener("input", function () {
+          const index = Number(this.dataset.index);
+          const field = this.dataset.field;
+          educationItems[index][field] = this.value;
+          updatePreview();
+      
+        });
+      });
+    }
+
+    function renderEducationPreview() {
+      previewEducation.innerHTML = "";
+
+      if (!educationItems.length) {
+        const empty = document.createElement("p");
+        empty.className = "education-empty";
+        empty.textContent = "Add an education entry from the form panel.";
+        previewEducation.appendChild(empty);
+        return;
+      }
+
+      educationItems.forEach(item => {
+        const entry = document.createElement("div");
+        entry.className = "entry";
+
+        const thesisHtml = item.thesis && item.thesis.trim()
+          ? `<p class="entry-details"><strong>Thesis:</strong> ${escapeHtml(item.thesis.trim())}</p>`
+          : "";
+
+        const detailsHtml = item.details.trim()
+          ? `<p class="entry-details">${escapeHtml(item.details.trim())}</p>`
+          : "";
+
+        entry.innerHTML = `
+          <div class="entry-top">
+            <div class="entry-left">${escapeHtml(item.school.trim() || "Clayton University")}</div>
+            <div class="entry-right">${escapeHtml(item.location.trim() || "City, Country")}</div>
+          </div>
+          <div class="entry-sub">
+            <div>${escapeHtml(item.degree.trim() || "Degree")}</div>
+            <div>${escapeHtml(item.year.trim() || "Years")}</div>
+          </div>
+          ${thesisHtml}
+          ${detailsHtml}
+        `;
+
+        previewEducation.appendChild(entry);
+      });
+    }
+
+    function renderResearchEditor() {
+      researchEditor.innerHTML = "";
+
+      researchItems.forEach((item, index) => {
+        const card = document.createElement("div");
+        card.className = "education-card";
+        card.innerHTML = `
+          <h3>Research ${index + 1}</h3>
+          <div class="education-grid">
+            <div class="form-group">
+              <label>Title</label>
+              <input type="text" data-index="${index}" data-field="title" value="${escapeHtml(item.title)}" />
+            </div>
+            <div class="form-group">
+              <label>Years</label>
+              <input type="text" data-index="${index}" data-field="year" value="${escapeHtml(item.year)}" />
+            </div>
+            <div class="form-group">
+              <label>Institution</label>
+              <input type="text" data-index="${index}" data-field="institution" value="${escapeHtml(item.institution)}" />
+            </div>
+            <div class="form-group">
+              <label>Location</label>
+              <input type="text" data-index="${index}" data-field="location" value="${escapeHtml(item.location)}" />
+            </div>
+            <div class="form-group full-width">
+              <label>Details</label>
+              <textarea data-index="${index}" data-field="details">${escapeHtml(item.details)}</textarea>
+            </div>
+          </div>
+          <div class="education-actions">
+            <button type="button" class="secondary remove-research-btn" data-index="${index}">Remove</button>
+          </div>
+        `;
+        researchEditor.appendChild(card);
+      });
+
+      const removeButtons = researchEditor.querySelectorAll(".remove-research-btn");
+      removeButtons.forEach(button => {
+        button.addEventListener("click", function () {
+          const index = Number(this.dataset.index);
+          researchItems.splice(index, 1);
+          renderResearchEditor();
+          updatePreview();
+        });
+      });
+
+      const inputs = researchEditor.querySelectorAll("input[data-field], textarea[data-field]");
+      inputs.forEach(input => {
+        input.addEventListener("input", function () {
+          const index = Number(this.dataset.index);
+          const field = this.dataset.field;
+          researchItems[index][field] = this.value;
+          updatePreview();
+        });
+      });
+    }
+
+    function renderResearchPreview() {
+      previewResearch.innerHTML = "";
+
+      if (!researchItems.length) {
+        const empty = document.createElement("p");
+        empty.className = "education-empty";
+        empty.textContent = "Add a research entry from the form panel.";
+        previewResearch.appendChild(empty);
+        return;
+      }
+
+      researchItems.forEach(item => {
+        const entry = document.createElement("div");
+        entry.className = "entry";
+
+        const detailLines = item.details.trim()
+          ? item.details.split("\n").filter(line => line.trim() !== "")
+          : [];
+
+        const detailsHtml = detailLines.length
+          ? `<ul class="compact">${detailLines.map(line => `<li>${escapeHtml(line)}</li>`).join("")}</ul>`
+          : "";
+
+        entry.innerHTML = `
+          <div class="entry-top">
+            <div class="entry-left">${escapeHtml(item.title.trim() || "Research Title")}</div>
+            <div class="entry-right">${escapeHtml(item.year.trim() || "Years")}</div>
+          </div>
+          <div class="entry-sub">
+            <div>${escapeHtml(item.institution.trim() || "Institution")}</div>
+            <div>${escapeHtml(item.location.trim() || "Location")}</div>
+          </div>
+          ${detailsHtml}
+        `;
+
+        previewResearch.appendChild(entry);
+      });
+    }
+
+
+    function renderTeachingEditor() {
+      teachingEditor.innerHTML = "";
+
+      teachingItems.forEach((item, index) => {
+        const card = document.createElement("div");
+        card.className = "education-card";
+        card.innerHTML = `
+          <h3>Teaching ${index + 1}</h3>
+          <div class="education-grid">
+            <div class="form-group">
+              <label>Title</label>
+              <input type="text" data-index="${index}" data-field="title" value="${escapeHtml(item.title)}" />
+            </div>
+            <div class="form-group">
+              <label>Years</label>
+              <input type="text" data-index="${index}" data-field="year" value="${escapeHtml(item.year)}" />
+            </div>
+            <div class="form-group">
+              <label>Institution</label>
+              <input type="text" data-index="${index}" data-field="institution" value="${escapeHtml(item.institution)}" />
+            </div>
+            <div class="form-group">
+              <label>Location</label>
+              <input type="text" data-index="${index}" data-field="location" value="${escapeHtml(item.location)}" />
+            </div>
+            <div class="form-group full-width">
+              <label>Details</label>
+              <textarea data-index="${index}" data-field="details">${escapeHtml(item.details)}</textarea>
+            </div>
+          </div>
+          <div class="education-actions">
+            <button type="button" class="secondary remove-teaching-btn" data-index="${index}">Remove</button>
+          </div>
+        `;
+        teachingEditor.appendChild(card);
+      });
+
+      const removeButtons = teachingEditor.querySelectorAll(".remove-teaching-btn");
+      removeButtons.forEach(button => {
+        button.addEventListener("click", function () {
+          const index = Number(this.dataset.index);
+          teachingItems.splice(index, 1);
+          renderTeachingEditor();
+          updatePreview();
+        });
+      });
+
+      const inputs = teachingEditor.querySelectorAll("input[data-field], textarea[data-field]");
+      inputs.forEach(input => {
+        input.addEventListener("input", function () {
+          const index = Number(this.dataset.index);
+          const field = this.dataset.field;
+          teachingItems[index][field] = this.value;
+          updatePreview();
+        });
+      });
+    }
+
+    function renderTeachingPreview() {
+      previewTeaching.innerHTML = "";
+
+      if (!teachingItems.length) {
+        const empty = document.createElement("p");
+        empty.className = "education-empty";
+        empty.textContent = "Add a teaching entry from the form panel.";
+        previewTeaching.appendChild(empty);
+        return;
+      }
+
+      teachingItems.forEach(item => {
+        const entry = document.createElement("div");
+        entry.className = "entry";
+
+        const detailLines = item.details.trim()
+          ? item.details.split("\n").filter(line => line.trim() !== "")
+          : [];
+
+        const detailsHtml = detailLines.length
+          ? `<ul class="compact">${detailLines.map(line => `<li>${escapeHtml(line)}</li>`).join("")}</ul>`
+          : "";
+
+        entry.innerHTML = `
+          <div class="entry-top">
+            <div class="entry-left">${escapeHtml(item.title.trim() || "Teaching Title")}</div>
+            <div class="entry-right">${escapeHtml(item.year.trim() || "Years")}</div>
+          </div>
+          <div class="entry-sub">
+            <div>${escapeHtml(item.institution.trim() || "Institution")}</div>
+            <div>${escapeHtml(item.location.trim() || "Location")}</div>
+          </div>
+          ${detailsHtml}
+        `;
+
+        previewTeaching.appendChild(entry);
+      });
+    }
+
+
+    function renderPublicationsPreview() {
+      const raw = publicationsInput.value.trim() || defaults.publications;
+      const lines = raw.split("\n").filter(line => line.trim() !== "");
+
+      previewPublications.innerHTML = "";
+      lines.forEach(line => {
+        const li = document.createElement("li");
+        li.textContent = line;
+        previewPublications.appendChild(li);
+      });
+    }
+
+    
+    function renderAwardsPreview() {
+      const raw = awardsInput.value.trim() || defaults.awards;
+      const lines = raw.split("\n").filter(line => line.trim() !== "");
+
+      previewAwards.innerHTML = "";
+      lines.forEach(line => {
+        const li = document.createElement("li");
+        li.textContent = line;
+        previewAwards.appendChild(li);
+      });
+    }
+
     function updatePreview() {
       updateText(nameInput, previewName, defaults.name);
       updateText(contact1Input, previewContact1, defaults.contact1);
       updateText(contact2Input, previewContact2, defaults.contact2);
-      updateText(contact3Input, previewContact3, defaults.contact3);
-      updateText(profileInput, previewProfile, defaults.profile);
-      updateText(eduSchoolInput, previewEduSchool, defaults.eduSchool);
-      updateText(eduLocationInput, previewEduLocation, defaults.eduLocation);
-      updateText(eduDegreeInput, previewEduDegree, defaults.eduDegree);
-      updateText(eduYearInput, previewEduYear, defaults.eduYear);
-      updateText(eduDetailsInput, previewEduDetails, defaults.eduDetails);
+      previewContact3.innerHTML = formatLinks(contact3Input.value.trim() || defaults.contact3);
+      const profileText = profileInput.value.trim();
+      if (profileText) {
+        previewProfile.textContent = profileText;
+        document.getElementById("profileSection").style.display = "";
+      } else {
+        document.getElementById("profileSection").style.display = "none";
+      }
       updateSkills();
+      renderEducationPreview();
+      renderResearchPreview();
+      renderTeachingPreview();
+      renderPublicationsPreview();
+      renderAwardsPreview();
     }
 
     nameInput.addEventListener("input", updatePreview);
@@ -523,11 +922,46 @@ Languages: English, Chinese`,
     contact3Input.addEventListener("input", updatePreview);
     profileInput.addEventListener("input", updatePreview);
     skillsInput.addEventListener("input", updatePreview);
-    eduSchoolInput.addEventListener("input", updatePreview);
-    eduLocationInput.addEventListener("input", updatePreview);
-    eduDegreeInput.addEventListener("input", updatePreview);
-    eduYearInput.addEventListener("input", updatePreview);
-    eduDetailsInput.addEventListener("input", updatePreview);
+    publicationsInput.addEventListener("input", updatePreview);
+    awardsInput.addEventListener("input", updatePreview);
+
+    addTeachingBtn.addEventListener("click", function () {
+      teachingItems.push({
+        title: "",
+        year: "",
+        institution: "",
+        location: "",
+        details: ""
+      });
+      renderTeachingEditor();
+      updatePreview();
+    });
+
+    addResearchBtn.addEventListener("click", function () {
+      researchItems.push({
+        title: "",
+        year: "",
+        institution: "",
+        location: "",
+        details: ""
+      });
+      renderResearchEditor();
+      updatePreview();
+    });
+
+    addEducationBtn.addEventListener("click", function () {
+      educationItems.push({
+        school: "",
+        location: "",
+        degree: "",
+        year: "",
+        thesis: "Title of thesis",
+        details: ""
+      });
+      renderEducationEditor();
+      updatePreview();
+      
+    });
 
     document.getElementById("downloadBtn").addEventListener("click", function () {
       window.print();
@@ -540,12 +974,16 @@ Languages: English, Chinese`,
       contact3Input.value = defaults.contact3;
       profileInput.value = defaults.profile;
       skillsInput.value = defaults.skills;
-      eduSchoolInput.value = defaults.eduSchool;
-      eduLocationInput.value = defaults.eduLocation;
-      eduDegreeInput.value = defaults.eduDegree;
-      eduYearInput.value = defaults.eduYear;
-      eduDetailsInput.value = defaults.eduDetails;
+      publicationsInput.value = defaults.publications;
+      awardsInput.value = defaults.awards;
+      educationItems = defaults.education.map(item => ({ ...item }));
+      researchItems = defaults.research.map(item => ({ ...item }));
+      teachingItems = defaults.teaching.map(item => ({ ...item }));
+      renderEducationEditor();
+      renderResearchEditor();
+      renderTeachingEditor();
       updatePreview();
+      
     });
 
     const formPanel = document.querySelector(".form-panel");
@@ -613,7 +1051,11 @@ Languages: English, Chinese`,
       formPanel.style.cursor = "default";
     });
 
+    renderEducationEditor();
+    renderResearchEditor();
+    renderTeachingEditor();
     updatePreview();
+      
   </script>
 </body>
 </html>
