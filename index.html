@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Academic CV Builder</title>
+  <link rel="icon" href="data:,">
+  <style>
+    :root {
+      --text: #111;
+      --muted: #444;
+      --line: #111;
+      --panel: #ffffff;
+      --bg: #f5f5f5;
+      --border: #d9d9d9;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Times New Roman", Times, serif;
+      line-height: 1.25;
+    }
+
+    .app {
+      display: flex;
+      align-items: flex-start;
+      gap: 0;
+      padding: 24px;
+    }
+
+    .form-panel {
+      flex: 0 0 auto;
+      width: 35%;
+      max-width: 700px;
+      min-width: 280px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-right: 4px solid #bbb;
+      border-radius: 10px;
+      padding: 18px;
+      position: sticky;
+      top: 24px;
+      font-family: Arial, Helvetica, sans-serif;
+      cursor: default;
+    }
+
+    .form-panel h2 {
+      margin: 0 0 14px;
+      font-size: 22px;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font: inherit;
+      background: #fff;
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 90px;
+    }
+
+    .button-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    button {
+      border: 1px solid #222;
+      background: #222;
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    button.secondary {
+      background: #fff;
+      color: #222;
+    }
+
+    .preview-panel {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .resize-handle {
+      display: none;
+    }
+
+    .page {
+      width: 8.5in;
+      min-height: 11in;
+      margin: 0 auto;
+      background: white;
+      padding: 0.7in 0.8in;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 18px;
+    }
+
+    .name {
+      font-size: 28px;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+      margin: 0 0 6px;
+    }
+
+    .contact-line {
+      font-size: 14px;
+      margin: 2px 0;
+    }
+
+    .section {
+      margin-top: 16px;
+    }
+
+    .section-title {
+      font-size: 15px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 2px;
+      margin-bottom: 8px;
+    }
+
+    .entry {
+      margin-bottom: 10px;
+    }
+
+    .entry-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 16px;
+    }
+
+    .entry-left {
+      font-size: 15px;
+      font-weight: bold;
+    }
+
+    .entry-right {
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    .entry-sub {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 16px;
+      font-size: 14px;
+      font-style: italic;
+      color: var(--muted);
+      margin-top: 1px;
+    }
+
+    .entry p {
+      font-size: 14px;
+      margin: 4px 0 0;
+    }
+
+    ul.compact {
+      margin: 4px 0 0 18px;
+      padding: 0;
+      font-size: 14px;
+    }
+
+    ul.compact li {
+      margin: 2px 0;
+    }
+
+    .simple-list {
+      margin: 0;
+      padding-left: 18px;
+      font-size: 14px;
+    }
+
+    .simple-list li {
+      margin: 2px 0;
+    }
+
+    .hint {
+      margin-top: 8px;
+      font-size: 12px;
+      color: #666;
+      line-height: 1.4;
+    }
+
+    @media (max-width: 1200px) {
+      .app {
+        flex-direction: column;
+      }
+
+      .form-panel {
+        width: 100%;
+        position: static;
+      }
+
+      .resize-handle {
+        display: none;
+      }
+
+      .page {
+        width: 100%;
+        min-height: auto;
+      }
+    }
+
+    @media print {
+      body {
+        background: white;
+      }
+
+      .form-panel,
+      .resize-handle {
+        display: none;
+      }
+
+      .app {
+        display: block;
+        padding: 0;
+      }
+
+      .preview-panel {
+        width: 100%;
+      }
+
+      .page {
+        margin: 0;
+        width: auto;
+        min-height: auto;
+        box-shadow: none;
+        padding: 0.55in 0.7in;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="form-panel">
+      <h2>Academic CV Builder</h2>
+
+      <div class="form-group">
+        <label for="nameInput">Name</label>
+        <input id="nameInput" type="text" value="YOUR NAME" />
+      </div>
+
+      <div class="form-group">
+        <label for="contact1Input">Contact line 1</label>
+        <input id="contact1Input" type="text" value="Street Address, City, State ZIP" />
+      </div>
+
+      <div class="form-group">
+        <label for="contact2Input">Contact line 2</label>
+        <input id="contact2Input" type="text" value="(123) 456-7890 | your.email@example.com" />
+      </div>
+
+      <div class="form-group">
+        <label for="contact3Input">Contact line 3</label>
+        <input id="contact3Input" type="text" value="LinkedIn / GitHub / Website" />
+      </div>
+
+      <div class="form-group">
+        <label for="profileInput">Profile</label>
+        <textarea id="profileInput">Write a short academic profile here.</textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="skillsInput">Skills (one per line)</label>
+        <textarea id="skillsInput">Programming: Python, MATLAB, R
+Tools: Linux, Git, LaTeX
+Languages: English, Chinese</textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="eduSchoolInput">Education: University</label>
+        <input id="eduSchoolInput" type="text" value="University Name" />
+      </div>
+
+      <div class="form-group">
+        <label for="eduLocationInput">Education: Location</label>
+        <input id="eduLocationInput" type="text" value="City, Country" />
+      </div>
+
+      <div class="form-group">
+        <label for="eduDegreeInput">Education: Degree</label>
+        <input id="eduDegreeInput" type="text" value="Master of Science in Subject" />
+      </div>
+
+      <div class="form-group">
+        <label for="eduYearInput">Education: Years</label>
+        <input id="eduYearInput" type="text" value="2022–2024" />
+      </div>
+
+      <div class="form-group">
+        <label for="eduDetailsInput">Education: Details</label>
+        <textarea id="eduDetailsInput">Relevant coursework: Machine Learning, Statistics, Scientific Computing</textarea>
+      </div>
+
+      <div class="button-row">
+        <button type="button" id="downloadBtn">Download PDF</button>
+        <button type="button" class="secondary" id="resetBtn">Reset</button>
+      </div>
+
+      <div class="hint">
+        This first version only connects a few fields. After this works, we will add Education, Experience, Publications, and dynamic “Add item” buttons.
+      </div>
+    </aside>
+
+    <div class="resize-handle" id="resizeHandle"></div>
+
+    <main class="preview-panel">
+      <div class="page" id="cvPage">
+        <header class="header">
+          <h1 class="name" id="previewName">YOUR NAME</h1>
+          <div class="contact-line" id="previewContact1">Street Address, City, State ZIP</div>
+          <div class="contact-line" id="previewContact2">(123) 456-7890 | your.email@example.com</div>
+          <div class="contact-line" id="previewContact3">LinkedIn / GitHub / Website</div>
+        </header>
+
+        <section class="section">
+          <div class="section-title">Profile</div>
+          <p id="previewProfile">Write a short academic profile here.</p>
+        </section>
+
+        <section class="section">
+          <div class="section-title">Education</div>
+
+          <div class="entry">
+            <div class="entry-top">
+              <div class="entry-left" id="previewEduSchool">University Name</div>
+              <div class="entry-right" id="previewEduLocation">City, Country</div>
+            </div>
+            <div class="entry-sub">
+              <div id="previewEduDegree">Master of Science in Subject</div>
+              <div id="previewEduYear">2022–2024</div>
+            </div>
+            <p id="previewEduDetails">Relevant coursework: Machine Learning, Statistics, Scientific Computing</p>
+          </div>
+
+          <div class="entry">
+            <div class="entry-top">
+              <div class="entry-left">Another University</div>
+              <div class="entry-right">City, Country</div>
+            </div>
+            <div class="entry-sub">
+              <div>Bachelor of Science in Subject</div>
+              <div>2018–2022</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-title">Research Experience</div>
+
+          <div class="entry">
+            <div class="entry-top">
+              <div class="entry-left">Research Assistant, Lab or Project Name</div>
+              <div class="entry-right">2024–Present</div>
+            </div>
+            <div class="entry-sub">
+              <div>Department / University</div>
+              <div>City, Country</div>
+            </div>
+            <ul class="compact">
+              <li>Studied topic X using method Y.</li>
+              <li>Analyzed data from Z and developed scripts for processing and visualization.</li>
+              <li>Collaborated with researchers on experiment design and reporting.</li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-title">Teaching Experience</div>
+
+          <div class="entry">
+            <div class="entry-top">
+              <div class="entry-left">Teaching Assistant, Course Title</div>
+              <div class="entry-right">Spring 2023</div>
+            </div>
+            <div class="entry-sub">
+              <div>University Name</div>
+              <div>City, Country</div>
+            </div>
+            <ul class="compact">
+              <li>Led tutorials and answered student questions.</li>
+              <li>Supported grading and course administration.</li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-title">Publications</div>
+          <ul class="simple-list">
+            <li>Author, A., Author, B. (2025). Title of article. <em>Journal Name</em>.</li>
+            <li>Author, A. (2024). Title of conference paper. <em>Conference Name</em>.</li>
+          </ul>
+        </section>
+
+        <section class="section">
+          <div class="section-title">Skills</div>
+          <ul class="simple-list" id="previewSkills">
+            <li>Programming: Python, MATLAB, R</li>
+            <li>Tools: Linux, Git, LaTeX</li>
+            <li>Languages: English, Chinese</li>
+          </ul>
+        </section>
+
+        <section class="section">
+          <div class="section-title">Awards</div>
+          <ul class="simple-list">
+            <li>Scholarship Name, 2024</li>
+            <li>Best Student Paper Award, 2023</li>
+          </ul>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const defaults = {
+      name: "YOUR NAME",
+      contact1: "Street Address, City, State ZIP",
+      contact2: "(123) 456-7890 | your.email@example.com",
+      contact3: "LinkedIn / GitHub / Website",
+      profile: "Write a short academic profile here.",
+      skills: `Programming: Python, MATLAB, R
+Tools: Linux, Git, LaTeX
+Languages: English, Chinese`,
+      eduSchool: "University Name",
+      eduLocation: "City, Country",
+      eduDegree: "Master of Science in Subject",
+      eduYear: "2022–2024",
+      eduDetails: "Relevant coursework: Machine Learning, Statistics, Scientific Computing"
+    };
+
+    const nameInput = document.getElementById("nameInput");
+    const contact1Input = document.getElementById("contact1Input");
+    const contact2Input = document.getElementById("contact2Input");
+    const contact3Input = document.getElementById("contact3Input");
+    const profileInput = document.getElementById("profileInput");
+    const skillsInput = document.getElementById("skillsInput");
+    const eduSchoolInput = document.getElementById("eduSchoolInput");
+    const eduLocationInput = document.getElementById("eduLocationInput");
+    const eduDegreeInput = document.getElementById("eduDegreeInput");
+    const eduYearInput = document.getElementById("eduYearInput");
+    const eduDetailsInput = document.getElementById("eduDetailsInput");
+
+    const previewName = document.getElementById("previewName");
+    const previewContact1 = document.getElementById("previewContact1");
+    const previewContact2 = document.getElementById("previewContact2");
+    const previewContact3 = document.getElementById("previewContact3");
+    const previewProfile = document.getElementById("previewProfile");
+    const previewSkills = document.getElementById("previewSkills");
+    const previewEduSchool = document.getElementById("previewEduSchool");
+    const previewEduLocation = document.getElementById("previewEduLocation");
+    const previewEduDegree = document.getElementById("previewEduDegree");
+    const previewEduYear = document.getElementById("previewEduYear");
+    const previewEduDetails = document.getElementById("previewEduDetails");
+
+    function updateText(inputEl, previewEl, fallback) {
+      previewEl.textContent = inputEl.value.trim() || fallback;
+    }
+
+    function updateSkills() {
+      const raw = skillsInput.value.trim();
+      const lines = raw ? raw.split("\n").filter(line => line.trim() !== "") : defaults.skills.split("\n");
+
+      previewSkills.innerHTML = "";
+      lines.forEach(line => {
+        const li = document.createElement("li");
+        li.textContent = line;
+        previewSkills.appendChild(li);
+      });
+    }
+
+    function updatePreview() {
+      updateText(nameInput, previewName, defaults.name);
+      updateText(contact1Input, previewContact1, defaults.contact1);
+      updateText(contact2Input, previewContact2, defaults.contact2);
+      updateText(contact3Input, previewContact3, defaults.contact3);
+      updateText(profileInput, previewProfile, defaults.profile);
+      updateText(eduSchoolInput, previewEduSchool, defaults.eduSchool);
+      updateText(eduLocationInput, previewEduLocation, defaults.eduLocation);
+      updateText(eduDegreeInput, previewEduDegree, defaults.eduDegree);
+      updateText(eduYearInput, previewEduYear, defaults.eduYear);
+      updateText(eduDetailsInput, previewEduDetails, defaults.eduDetails);
+      updateSkills();
+    }
+
+    nameInput.addEventListener("input", updatePreview);
+    contact1Input.addEventListener("input", updatePreview);
+    contact2Input.addEventListener("input", updatePreview);
+    contact3Input.addEventListener("input", updatePreview);
+    profileInput.addEventListener("input", updatePreview);
+    skillsInput.addEventListener("input", updatePreview);
+    eduSchoolInput.addEventListener("input", updatePreview);
+    eduLocationInput.addEventListener("input", updatePreview);
+    eduDegreeInput.addEventListener("input", updatePreview);
+    eduYearInput.addEventListener("input", updatePreview);
+    eduDetailsInput.addEventListener("input", updatePreview);
+
+    document.getElementById("downloadBtn").addEventListener("click", function () {
+      window.print();
+    });
+
+    document.getElementById("resetBtn").addEventListener("click", function () {
+      nameInput.value = defaults.name;
+      contact1Input.value = defaults.contact1;
+      contact2Input.value = defaults.contact2;
+      contact3Input.value = defaults.contact3;
+      profileInput.value = defaults.profile;
+      skillsInput.value = defaults.skills;
+      eduSchoolInput.value = defaults.eduSchool;
+      eduLocationInput.value = defaults.eduLocation;
+      eduDegreeInput.value = defaults.eduDegree;
+      eduYearInput.value = defaults.eduYear;
+      eduDetailsInput.value = defaults.eduDetails;
+      updatePreview();
+    });
+
+    const formPanel = document.querySelector(".form-panel");
+    const app = document.querySelector(".app");
+    const savedPanelWidth = localStorage.getItem("formPanelWidth");
+    const edgeGrabSize = 12;
+
+    if (savedPanelWidth) {
+      formPanel.style.width = savedPanelWidth + "px";
+      formPanel.style.flexBasis = savedPanelWidth + "px";
+    }
+
+    let isResizing = false;
+
+    formPanel.addEventListener("mousemove", function (e) {
+      if (window.innerWidth <= 1200 || isResizing) return;
+      const rect = formPanel.getBoundingClientRect();
+      const nearRightEdge = rect.right - e.clientX <= edgeGrabSize;
+
+      formPanel.style.cursor = nearRightEdge ? "col-resize" : "default";
+    });
+
+    formPanel.addEventListener("mouseleave", function () {
+      if (!isResizing) {
+        formPanel.style.cursor = "default";
+      }
+    });
+
+    formPanel.addEventListener("mousedown", function (e) {
+      if (window.innerWidth <= 1200) return;
+
+      const rect = formPanel.getBoundingClientRect();
+      const nearRightEdge = rect.right - e.clientX <= edgeGrabSize;
+
+      if (!nearRightEdge) return;
+
+      isResizing = true;
+      document.body.style.cursor = "col-resize";
+      document.body.style.userSelect = "none";
+      e.preventDefault();
+    });
+
+    document.addEventListener("mousemove", function (e) {
+      if (!isResizing) return;
+
+      const appLeft = app.getBoundingClientRect().left;
+      let newWidth = e.clientX - appLeft;
+
+      const minWidth = 280;
+      const maxWidth = 700;
+
+      if (newWidth < minWidth) newWidth = minWidth;
+      if (newWidth > maxWidth) newWidth = maxWidth;
+
+      formPanel.style.width = newWidth + "px";
+      formPanel.style.flexBasis = newWidth + "px";
+      localStorage.setItem("formPanelWidth", newWidth);
+    });
+
+    document.addEventListener("mouseup", function () {
+      if (!isResizing) return;
+      isResizing = false;
+      document.body.style.cursor = "";
+      document.body.style.userSelect = "";
+      formPanel.style.cursor = "default";
+    });
+
+    updatePreview();
+  </script>
+</body>
+</html>
