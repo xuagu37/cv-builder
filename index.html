@@ -968,6 +968,8 @@ Best Student Paper Award, 2023`
     });
 
     document.getElementById("downloadBtn").addEventListener("click", function () {
+      const name = nameInput.value.trim() || "CV";
+      document.title = name + "-CV";
       window.print();
     });
 
