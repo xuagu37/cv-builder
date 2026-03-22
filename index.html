@@ -44,6 +44,8 @@
       width: 35%;
       max-width: 700px;
       min-width: 280px;
+      max-height: calc(100vh - 48px);
+      overflow-y: auto;
       background: var(--panel);
       border: 1px solid var(--border);
       border-right: 4px solid #bbb;
@@ -110,6 +112,9 @@
     .preview-panel {
       flex: 1;
       min-width: 0;
+      position: sticky;
+      top: 24px;
+      align-self: flex-start;
     }
 
     .resize-handle {
@@ -122,6 +127,7 @@
       margin: 0 auto;
       background: white;
       padding: 0.7in 0.8in;
+      border: 12px solid #e6e6e6;
       box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
     }
 
@@ -229,6 +235,13 @@
       background: #fafafa;
     }
 
+    .profile-card {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      background: #fafafa;
+    }
+
     .education-card h3 {
       margin: 0 0 10px;
       font-size: 14px;
@@ -279,11 +292,17 @@
 
       .form-panel {
         width: 100%;
+        max-height: none;
+        overflow-y: visible;
         position: static;
       }
 
       .resize-handle {
         display: none;
+      }
+
+      .preview-panel {
+        position: static;
       }
 
       .page {
@@ -293,6 +312,10 @@
     }
 
     @media print {
+      @page {
+        margin: 0.7in 0.8in;
+      }
+
       body {
         background: white;
       }
@@ -316,7 +339,27 @@
         width: auto;
         min-height: auto;
         box-shadow: none;
-        padding: 0.55in 0.7in;
+        border: none;
+        padding: 0;
+      }
+
+      .section,
+      .entry,
+      .simple-list,
+      .compact,
+      .simple-list li,
+      .compact li {
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+
+      .section-title {
+        break-after: avoid;
+        page-break-after: avoid;
+      }
+
+      ul {
+        margin-top: 0;
       }
     }
   </style>
@@ -347,9 +390,12 @@
         <input id="contact3Input" type="text" value="GitHub (https://github.com/yourname) | LinkedIn (https://linkedin.com/in/yourname)" />
       </div>
 
-      <div class="form-group">
-        <label for="profileInput">Profile (Optional)</label>
-        <textarea id="profileInput">Master’s graduate in Computer Science with a strong background in machine learning, data analysis, and scientific computing. Interested in pursuing a PhD to advance research in AI-driven modeling and data-intensive systems.</textarea>
+      <div class="form-group" id="profileFormGroup">
+        <label>Profile</label>
+        <div id="profileEditor"></div>
+        <div class="button-row">
+          <button type="button" class="secondary" id="addProfileBtn" style="display: none;">+ Add Profile</button>
+        </div>
       </div>
 
       <div class="form-group">
@@ -376,16 +422,28 @@
         </div>
       </div>
 
-      <div class="form-group">
-        <label for="publicationsInput">Publications (one per line)</label>
-        <textarea id="publicationsInput">X. Mo and X. Tong, “Title of article,” Journal Name, 2025.
-X. Mo and X. Tong, “Title of conference paper,” in Conference Name, 2024.</textarea>
+      <div class="form-group" id="professionalFormGroup">
+        <label>Professional Experience</label>
+        <div id="professionalEditor"></div>
+        <div class="button-row">
+          <button type="button" class="secondary" id="addProfessionalBtn">+ Add Professional</button>
+        </div>
       </div>
 
-      <div class="form-group">
-        <label for="awardsInput">Awards (one per line)</label>
-        <textarea id="awardsInput">Scholarship Name, 2024
-Best Student Paper Award, 2023</textarea>
+      <div class="form-group" id="publicationsFormGroup">
+        <label>Publications</label>
+        <div id="publicationsEditor"></div>
+        <div class="button-row">
+          <button type="button" class="secondary" id="addPublicationsBtn" style="display: none;">+ Add Publications</button>
+        </div>
+      </div>
+
+      <div class="form-group" id="awardsFormGroup">
+        <label>Awards</label>
+        <div id="awardsEditor"></div>
+        <div class="button-row">
+          <button type="button" class="secondary" id="addAwardsBtn" style="display: none;">+ Add Awards</button>
+        </div>
       </div>
       <div class="form-group">
         <label for="skillsInput">Skills (one per line)</label>
@@ -413,7 +471,7 @@ Languages: English (fluent), Chinese (native)</textarea>
 
         <section class="section" id="profileSection">
           <div class="section-title">Profile</div>
-          <p id="previewProfile">Master’s graduate in Computer Science with a strong background in machine learning, data analysis, and scientific computing. Experienced in developing research-oriented software and working with complex datasets. Interested in pursuing a PhD to advance research in AI-driven modeling and data-intensive systems.</p>
+          <p id="previewProfile">Master’s graduate in Computer Science with a strong background in machine learning, data analysis, and scientific computing. Interested in pursuing a PhD to advance research in AI-driven modeling and data-intensive systems.</p>
         </section>
 
         <section class="section">
@@ -426,17 +484,22 @@ Languages: English (fluent), Chinese (native)</textarea>
           <div id="previewResearch"></div>
         </section>
 
-        <section class="section">
+        <section class="section" id="teachingSection">
           <div class="section-title">Teaching Experience</div>
           <div id="previewTeaching"></div>
         </section>
 
-        <section class="section">
+        <section class="section" id="professionalSection">
+          <div class="section-title">Professional Experience</div>
+          <div id="previewProfessional"></div>
+        </section>
+
+        <section class="section" id="publicationsSection">
           <div class="section-title">Publications</div>
           <ul class="simple-list" id="previewPublications"></ul>
         </section>
 
-        <section class="section">
+        <section class="section" id="awardsSection">
           <div class="section-title">Awards</div>
           <ul class="simple-list" id="previewAwards"></ul>
         </section>
@@ -459,7 +522,7 @@ Languages: English (fluent), Chinese (native)</textarea>
       contact1: "Street Address, Postcode City, Country",
       contact2: "(123) 456-7890 | your.email@example.com",
       contact3: "GitHub (https://github.com/yourname) | LinkedIn (https://linkedin.com/in/yourname)",
-      profile: "Master’s graduate in Computer Science with a strong background in machine learning, data analysis, and scientific computing. Experienced in developing research-oriented software and working with complex datasets. Interested in pursuing a PhD to advance research in AI-driven modeling and data-intensive systems.",
+      profile: "Master’s graduate in Computer Science with a strong background in machine learning, data analysis, and scientific computing. Interested in pursuing a PhD to advance research in AI-driven modeling and data-intensive systems.",
       skills: `Programming: Python, MATLAB, R
 Tools: Linux, Git, LaTeX
 Languages: English (fluent), Chinese (native)`,
@@ -499,6 +562,15 @@ Languages: English (fluent), Chinese (native)`,
           details: "Led tutorials and answered student questions.\nSupported grading and course administration."
         }
       ],
+      professional: [
+        {
+          title: "Data Science Intern",
+          year: "June–August 2023",
+          institution: "ABC Tech Company",
+          location: "City, Country",
+          details: "Developed data analysis scripts to support product analytics.\nBuilt simple predictive models using Python and scikit-learn.\nCommunicated results to the engineering team and supported decision-making."
+        }
+      ],
       publications: `X. Mo and X. Tong, “Title of article,” Journal Name, 2025.
 X. Mo and X. Tong, “Title of conference paper,” in Conference Name, 2024.`,
       awards: `Scholarship Name, 2024
@@ -508,20 +580,27 @@ Best Student Paper Award, 2023`
     let educationItems = defaults.education.map(item => ({ ...item }));
     let researchItems = defaults.research.map(item => ({ ...item }));
     let teachingItems = defaults.teaching.map(item => ({ ...item }));
+    let professionalItems = defaults.professional.map(item => ({ ...item }));
 
     const nameInput = document.getElementById("nameInput");
     const contact1Input = document.getElementById("contact1Input");
     const contact2Input = document.getElementById("contact2Input");
     const contact3Input = document.getElementById("contact3Input");
-    const profileInput = document.getElementById("profileInput");
+    const profileEditor = document.getElementById("profileEditor");
+    const addProfileBtn = document.getElementById("addProfileBtn");
+    const awardsEditor = document.getElementById("awardsEditor");
+    const addAwardsBtn = document.getElementById("addAwardsBtn");
     const skillsInput = document.getElementById("skillsInput");
+    const publicationsEditor = document.getElementById("publicationsEditor");
+    const addPublicationsBtn = document.getElementById("addPublicationsBtn");
     const educationEditor = document.getElementById("educationEditor");
     const addEducationBtn = document.getElementById("addEducationBtn");
     const researchEditor = document.getElementById("researchEditor");
     const addResearchBtn = document.getElementById("addResearchBtn");
     const teachingEditor = document.getElementById("teachingEditor");
     const addTeachingBtn = document.getElementById("addTeachingBtn");
-    const publicationsInput = document.getElementById("publicationsInput");
+    const professionalEditor = document.getElementById("professionalEditor");
+    const addProfessionalBtn = document.getElementById("addProfessionalBtn");
     const awardsInput = document.getElementById("awardsInput");
 
     const previewName = document.getElementById("previewName");
@@ -533,8 +612,118 @@ Best Student Paper Award, 2023`
     const previewEducation = document.getElementById("previewEducation");
     const previewResearch = document.getElementById("previewResearch");
     const previewTeaching = document.getElementById("previewTeaching");
+    const previewProfessional = document.getElementById("previewProfessional");
     const previewPublications = document.getElementById("previewPublications");
     const previewAwards = document.getElementById("previewAwards");
+
+    let hasProfile = true;
+    let profileTextValue = defaults.profile;
+    let hasPublications = true;
+    let publicationsTextValue = defaults.publications;
+    let hasAwards = true;
+    let awardsTextValue = defaults.awards;
+
+    function renderProfileEditor() {
+      profileEditor.innerHTML = "";
+
+      if (!hasProfile) {
+        addProfileBtn.style.display = "";
+        return;
+      }
+
+      addProfileBtn.style.display = "none";
+
+      const wrapper = document.createElement("div");
+      wrapper.className = "profile-card";
+      wrapper.innerHTML = `
+        <textarea id="profileInput">${escapeHtml(profileTextValue)}</textarea>
+        <div class="education-actions">
+          <button type="button" class="secondary" id="removeProfileBtn">Remove</button>
+        </div>
+      `;
+      profileEditor.appendChild(wrapper);
+
+      const profileInput = document.getElementById("profileInput");
+      profileInput.addEventListener("input", function () {
+        profileTextValue = this.value;
+        updatePreview();
+      });
+
+      document.getElementById("removeProfileBtn").addEventListener("click", function () {
+        hasProfile = false;
+        profileTextValue = "";
+        renderProfileEditor();
+        updatePreview();
+      });
+    }
+
+    function renderPublicationsEditor() {
+      publicationsEditor.innerHTML = "";
+
+      if (!hasPublications) {
+        addPublicationsBtn.style.display = "";
+        return;
+      }
+
+      addPublicationsBtn.style.display = "none";
+
+      const wrapper = document.createElement("div");
+      wrapper.className = "profile-card";
+      wrapper.innerHTML = `
+        <textarea id="publicationsInput">${escapeHtml(publicationsTextValue)}</textarea>
+        <div class="education-actions">
+          <button type="button" class="secondary" id="removePublicationsBtn">Remove</button>
+        </div>
+      `;
+      publicationsEditor.appendChild(wrapper);
+
+      const publicationsInput = document.getElementById("publicationsInput");
+      publicationsInput.addEventListener("input", function () {
+        publicationsTextValue = this.value;
+        updatePreview();
+      });
+
+      document.getElementById("removePublicationsBtn").addEventListener("click", function () {
+        hasPublications = false;
+        publicationsTextValue = "";
+        renderPublicationsEditor();
+        updatePreview();
+      });
+    }
+
+    function renderAwardsEditor() {
+      awardsEditor.innerHTML = "";
+
+      if (!hasAwards) {
+        addAwardsBtn.style.display = "";
+        return;
+      }
+
+      addAwardsBtn.style.display = "none";
+
+      const wrapper = document.createElement("div");
+      wrapper.className = "profile-card";
+      wrapper.innerHTML = `
+        <textarea id="awardsInput">${escapeHtml(awardsTextValue)}</textarea>
+        <div class="education-actions">
+          <button type="button" class="secondary" id="removeAwardsBtn">Remove</button>
+        </div>
+      `;
+      awardsEditor.appendChild(wrapper);
+
+      const awardsInput = document.getElementById("awardsInput");
+      awardsInput.addEventListener("input", function () {
+        awardsTextValue = this.value;
+        updatePreview();
+      });
+
+      document.getElementById("removeAwardsBtn").addEventListener("click", function () {
+        hasAwards = false;
+        awardsTextValue = "";
+        renderAwardsEditor();
+        updatePreview();
+      });
+    }
 
     function updateText(inputEl, previewEl, fallback) {
       previewEl.textContent = inputEl.value.trim() || fallback;
@@ -820,6 +1009,7 @@ Best Student Paper Award, 2023`
           const index = Number(this.dataset.index);
           teachingItems.splice(index, 1);
           renderTeachingEditor();
+    renderProfessionalEditor();
           updatePreview();
         });
       });
@@ -835,7 +1025,105 @@ Best Student Paper Award, 2023`
       });
     }
 
-    function renderTeachingPreview() {
+    
+    function renderProfessionalEditor() {
+      professionalEditor.innerHTML = "";
+
+      addProfessionalBtn.style.display = "";
+
+      professionalItems.forEach((item, index) => {
+        const card = document.createElement("div");
+        card.className = "education-card";
+        card.innerHTML = `
+          <h3>Professional ${index + 1}</h3>
+          <div class="education-grid">
+            <div class="form-group">
+              <label>Title</label>
+              <input type="text" data-index="${index}" data-field="title" value="${escapeHtml(item.title)}" />
+            </div>
+            <div class="form-group">
+              <label>Years</label>
+              <input type="text" data-index="${index}" data-field="year" value="${escapeHtml(item.year)}" />
+            </div>
+            <div class="form-group">
+              <label>Organization</label>
+              <input type="text" data-index="${index}" data-field="institution" value="${escapeHtml(item.institution)}" />
+            </div>
+            <div class="form-group">
+              <label>Location</label>
+              <input type="text" data-index="${index}" data-field="location" value="${escapeHtml(item.location)}" />
+            </div>
+            <div class="form-group full-width">
+              <label>Details</label>
+              <textarea data-index="${index}" data-field="details">${escapeHtml(item.details)}</textarea>
+            </div>
+          </div>
+          <div class="education-actions">
+            <button type="button" class="secondary remove-professional-btn" data-index="${index}">Remove</button>
+          </div>
+        `;
+        professionalEditor.appendChild(card);
+      });
+
+      const removeButtons = professionalEditor.querySelectorAll(".remove-professional-btn");
+      removeButtons.forEach(button => {
+        button.addEventListener("click", function () {
+          const index = Number(this.dataset.index);
+          professionalItems.splice(index, 1);
+          renderProfessionalEditor();
+          updatePreview();
+        });
+      });
+
+      const inputs = professionalEditor.querySelectorAll("input[data-field], textarea[data-field]");
+      inputs.forEach(input => {
+        input.addEventListener("input", function () {
+          const index = Number(this.dataset.index);
+          const field = this.dataset.field;
+          professionalItems[index][field] = this.value;
+          updatePreview();
+        });
+      });
+    }
+
+    function renderProfessionalPreview() {
+      previewProfessional.innerHTML = "";
+
+      if (!professionalItems.length) {
+        document.getElementById("professionalSection").style.display = "none";
+        return;
+      }
+
+      document.getElementById("professionalSection").style.display = "";
+
+      professionalItems.forEach(item => {
+        const entry = document.createElement("div");
+        entry.className = "entry";
+
+        const detailLines = item.details.trim()
+          ? item.details.split("\n").filter(line => line.trim() !== "")
+          : [];
+
+        const detailsHtml = detailLines.length
+          ? `<ul class="compact">${detailLines.map(line => `<li>${escapeHtml(line)}</li>`).join("")}</ul>`
+          : "";
+
+        entry.innerHTML = `
+          <div class="entry-top">
+            <div class="entry-left">${escapeHtml(item.title.trim() || "Position")}</div>
+            <div class="entry-right">${escapeHtml(item.year.trim() || "Years")}</div>
+          </div>
+          <div class="entry-sub">
+            <div>${escapeHtml(item.institution.trim() || "Organization")}</div>
+            <div>${escapeHtml(item.location.trim() || "Location")}</div>
+          </div>
+          ${detailsHtml}
+        `;
+
+        previewProfessional.appendChild(entry);
+      });
+    }
+function renderTeachingPreview() {
       previewTeaching.innerHTML = "";
 
       if (!teachingItems.length) {
@@ -860,12 +1148,12 @@ Best Student Paper Award, 2023`
 
         entry.innerHTML = `
           <div class="entry-top">
-            <div class="entry-left">${escapeHtml(item.title.trim() || "Teaching Title")}</div>
+            <div class="entry-left">${escapeHtml(item.title.trim() || "Teaching Title, Course Title")}</div>
             <div class="entry-right">${escapeHtml(item.year.trim() || "Years")}</div>
           </div>
           <div class="entry-sub">
             <div>${escapeHtml(item.institution.trim() || "Institution")}</div>
-            <div>${escapeHtml(item.location.trim() || "Location")}</div>
+            <div>${escapeHtml(item.location.trim() || "City, Country")}</div>
           </div>
           ${detailsHtml}
         `;
@@ -876,8 +1164,8 @@ Best Student Paper Award, 2023`
 
 
     function renderPublicationsPreview() {
-      const raw = publicationsInput.value.trim() || defaults.publications;
-      const lines = raw.split("\n").filter(line => line.trim() !== "");
+      const raw = hasPublications ? (publicationsTextValue.trim() || defaults.publications) : "";
+      const lines = raw ? raw.split("\n").filter(line => line.trim() !== "") : [];
 
       previewPublications.innerHTML = "";
       lines.forEach(line => {
@@ -887,10 +1175,10 @@ Best Student Paper Award, 2023`
       });
     }
 
-    
+
     function renderAwardsPreview() {
-      const raw = awardsInput.value.trim() || defaults.awards;
-      const lines = raw.split("\n").filter(line => line.trim() !== "");
+      const raw = hasAwards ? (awardsTextValue.trim() || defaults.awards) : "";
+      const lines = raw ? raw.split("\n").filter(line => line.trim() !== "") : [];
 
       previewAwards.innerHTML = "";
       lines.forEach(line => {
@@ -905,7 +1193,7 @@ Best Student Paper Award, 2023`
       updateText(contact1Input, previewContact1, defaults.contact1);
       updateText(contact2Input, previewContact2, defaults.contact2);
       previewContact3.innerHTML = formatLinks(contact3Input.value.trim() || defaults.contact3);
-      const profileText = profileInput.value.trim();
+      const profileText = hasProfile ? profileTextValue.trim() : "";
       if (profileText) {
         previewProfile.textContent = profileText;
         document.getElementById("profileSection").style.display = "";
@@ -916,18 +1204,52 @@ Best Student Paper Award, 2023`
       renderEducationPreview();
       renderResearchPreview();
       renderTeachingPreview();
+      renderProfessionalPreview();
+      if (teachingItems.length === 0) {
+        document.getElementById("teachingSection").style.display = "none";
+      } else {
+        document.getElementById("teachingSection").style.display = "";
+      }
       renderPublicationsPreview();
+      if (hasPublications && previewPublications.children.length > 0) {
+        document.getElementById("publicationsSection").style.display = "";
+      } else {
+        document.getElementById("publicationsSection").style.display = "none";
+      }
       renderAwardsPreview();
+      if (hasAwards && previewAwards.children.length > 0) {
+        document.getElementById("awardsSection").style.display = "";
+      } else {
+        document.getElementById("awardsSection").style.display = "none";
+      }
     }
 
     nameInput.addEventListener("input", updatePreview);
     contact1Input.addEventListener("input", updatePreview);
     contact2Input.addEventListener("input", updatePreview);
     contact3Input.addEventListener("input", updatePreview);
-    profileInput.addEventListener("input", updatePreview);
     skillsInput.addEventListener("input", updatePreview);
-    publicationsInput.addEventListener("input", updatePreview);
-    awardsInput.addEventListener("input", updatePreview);
+
+    addProfileBtn.addEventListener("click", function () {
+      hasProfile = true;
+      profileTextValue = defaults.profile;
+      renderProfileEditor();
+      updatePreview();
+    });
+
+    addPublicationsBtn.addEventListener("click", function () {
+      hasPublications = true;
+      publicationsTextValue = defaults.publications;
+      renderPublicationsEditor();
+      updatePreview();
+    });
+
+    addAwardsBtn.addEventListener("click", function () {
+      hasAwards = true;
+      awardsTextValue = defaults.awards;
+      renderAwardsEditor();
+      updatePreview();
+    });
 
     addTeachingBtn.addEventListener("click", function () {
       teachingItems.push({
@@ -938,6 +1260,19 @@ Best Student Paper Award, 2023`
         details: ""
       });
       renderTeachingEditor();
+    renderProfessionalEditor();
+      updatePreview();
+    });
+
+    addProfessionalBtn.addEventListener("click", function () {
+      professionalItems.push({
+        title: "",
+        year: "",
+        institution: "",
+        location: "",
+        details: ""
+      });
+      renderProfessionalEditor();
       updatePreview();
     });
 
@@ -978,16 +1313,24 @@ Best Student Paper Award, 2023`
       contact1Input.value = defaults.contact1;
       contact2Input.value = defaults.contact2;
       contact3Input.value = defaults.contact3;
-      profileInput.value = defaults.profile;
+      hasProfile = true;
+      profileTextValue = defaults.profile;
+      hasPublications = true;
+      publicationsTextValue = defaults.publications;
+      hasAwards = true;
+      awardsTextValue = defaults.awards;
+      renderProfileEditor();
+      renderPublicationsEditor();
+      renderAwardsEditor();
       skillsInput.value = defaults.skills;
-      publicationsInput.value = defaults.publications;
-      awardsInput.value = defaults.awards;
       educationItems = defaults.education.map(item => ({ ...item }));
       researchItems = defaults.research.map(item => ({ ...item }));
       teachingItems = defaults.teaching.map(item => ({ ...item }));
+      professionalItems = defaults.professional.map(item => ({ ...item }));
       renderEducationEditor();
       renderResearchEditor();
       renderTeachingEditor();
+    renderProfessionalEditor();
       updatePreview();
       
     });
@@ -1057,9 +1400,13 @@ Best Student Paper Award, 2023`
       formPanel.style.cursor = "default";
     });
 
+    renderProfileEditor();
+    renderPublicationsEditor();
+    renderAwardsEditor();
     renderEducationEditor();
     renderResearchEditor();
     renderTeachingEditor();
+    renderProfessionalEditor();
     updatePreview();
       
   </script>
