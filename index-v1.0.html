@@ -372,7 +372,7 @@
   <div class="app">
     <aside class="form-panel">
       <h2>Academic CV Builder</h2>
-      <div class="builder-meta">Created by 北欧少女莫小贝 · v1.1</div>
+      <div class="builder-meta">Created by 北欧少女莫小贝 · v1.0</div>
       <div class="builder-meta">Contact beioumoxiaobei [at] gmail [dot] com</div>
 
       <div class="form-group">
@@ -380,12 +380,9 @@
         <input id="nameInput" type="text" value="XIAOBEI MO" />
       </div>
 
-      <div class="form-group" id="addressFormGroup">
-        <label>Address</label>
-        <div id="addressEditor"></div>
-        <div class="button-row">
-          <button type="button" class="secondary" id="addAddressBtn" style="display: none;">+ Add Address</button>
-        </div>
+      <div class="form-group">
+        <label for="contact1Input">Address</label>
+        <input id="contact1Input" type="text" value="Street Address, Postcode City, Country" />
       </div>
 
       <div class="form-group">
@@ -393,12 +390,9 @@
         <input id="contact2Input" type="text" value="(123) 456-7890 | your.email@example.com" />
       </div>
 
-      <div class="form-group" id="websitesFormGroup">
-        <label>Websites</label>
-        <div id="websitesEditor"></div>
-        <div class="button-row">
-          <button type="button" class="secondary" id="addWebsitesBtn" style="display: none;">+ Add Websites</button>
-        </div>
+      <div class="form-group">
+        <label for="contact3Input">Websites</label>
+        <input id="contact3Input" type="text" value="GitHub (https://github.com/yourname) | LinkedIn (https://linkedin.com/in/yourname)" />
       </div>
 
       <div class="form-group" id="profileFormGroup">
@@ -594,13 +588,11 @@ Best Student Paper Award, 2023`
     let professionalItems = defaults.professional.map(item => ({ ...item }));
 
     const nameInput = document.getElementById("nameInput");
+    const contact1Input = document.getElementById("contact1Input");
     const contact2Input = document.getElementById("contact2Input");
+    const contact3Input = document.getElementById("contact3Input");
     const profileEditor = document.getElementById("profileEditor");
     const addProfileBtn = document.getElementById("addProfileBtn");
-    const addressEditor = document.getElementById("addressEditor");
-    const addAddressBtn = document.getElementById("addAddressBtn");
-    const websitesEditor = document.getElementById("websitesEditor");
-    const addWebsitesBtn = document.getElementById("addWebsitesBtn");
     const awardsEditor = document.getElementById("awardsEditor");
     const addAwardsBtn = document.getElementById("addAwardsBtn");
     const skillsInput = document.getElementById("skillsInput");
@@ -629,10 +621,6 @@ Best Student Paper Award, 2023`
     const previewPublications = document.getElementById("previewPublications");
     const previewAwards = document.getElementById("previewAwards");
 
-    let hasAddress = true;
-    let addressTextValue = defaults.contact1;
-    let hasWebsites = true;
-    let websitesTextValue = defaults.contact3;
     let hasProfile = true;
     let profileTextValue = defaults.profile;
     let hasPublications = true;
@@ -738,74 +726,6 @@ Best Student Paper Award, 2023`
         hasAwards = false;
         awardsTextValue = "";
         renderAwardsEditor();
-        updatePreview();
-      });
-    }
-
-    function renderAddressEditor() {
-      addressEditor.innerHTML = "";
-
-      if (!hasAddress) {
-        addAddressBtn.style.display = "";
-        return;
-      }
-
-      addAddressBtn.style.display = "none";
-
-      const wrapper = document.createElement("div");
-      wrapper.className = "profile-card";
-      wrapper.innerHTML = `
-        <input id="contact1Input" type="text" value="${escapeHtml(addressTextValue)}" />
-        <div class="education-actions">
-          <button type="button" class="secondary" id="removeAddressBtn">Remove</button>
-        </div>
-      `;
-      addressEditor.appendChild(wrapper);
-
-      const contact1Input = document.getElementById("contact1Input");
-      contact1Input.addEventListener("input", function () {
-        addressTextValue = this.value;
-        updatePreview();
-      });
-
-      document.getElementById("removeAddressBtn").addEventListener("click", function () {
-        hasAddress = false;
-        addressTextValue = "";
-        renderAddressEditor();
-        updatePreview();
-      });
-    }
-
-    function renderWebsitesEditor() {
-      websitesEditor.innerHTML = "";
-
-      if (!hasWebsites) {
-        addWebsitesBtn.style.display = "";
-        return;
-      }
-
-      addWebsitesBtn.style.display = "none";
-
-      const wrapper = document.createElement("div");
-      wrapper.className = "profile-card";
-      wrapper.innerHTML = `
-        <input id="contact3Input" type="text" value="${escapeHtml(websitesTextValue)}" />
-        <div class="education-actions">
-          <button type="button" class="secondary" id="removeWebsitesBtn">Remove</button>
-        </div>
-      `;
-      websitesEditor.appendChild(wrapper);
-
-      const contact3Input = document.getElementById("contact3Input");
-      contact3Input.addEventListener("input", function () {
-        websitesTextValue = this.value;
-        updatePreview();
-      });
-
-      document.getElementById("removeWebsitesBtn").addEventListener("click", function () {
-        hasWebsites = false;
-        websitesTextValue = "";
-        renderWebsitesEditor();
         updatePreview();
       });
     }
@@ -1275,19 +1195,9 @@ function renderTeachingPreview() {
 
     function updatePreview() {
       updateText(nameInput, previewName, defaults.name);
-      if (hasAddress && addressTextValue.trim()) {
-        previewContact1.textContent = addressTextValue.trim();
-        previewContact1.style.display = "";
-      } else {
-        previewContact1.style.display = "none";
-      }
+      updateText(contact1Input, previewContact1, defaults.contact1);
       updateText(contact2Input, previewContact2, defaults.contact2);
-      if (hasWebsites && websitesTextValue.trim()) {
-        previewContact3.innerHTML = formatLinks(websitesTextValue.trim());
-        previewContact3.style.display = "";
-      } else {
-        previewContact3.style.display = "none";
-      }
+      previewContact3.innerHTML = formatLinks(contact3Input.value.trim() || defaults.contact3);
       const profileText = hasProfile ? profileTextValue.trim() : "";
       if (profileText) {
         previewProfile.textContent = profileText;
@@ -1320,22 +1230,10 @@ function renderTeachingPreview() {
     }
 
     nameInput.addEventListener("input", updatePreview);
+    contact1Input.addEventListener("input", updatePreview);
     contact2Input.addEventListener("input", updatePreview);
+    contact3Input.addEventListener("input", updatePreview);
     skillsInput.addEventListener("input", updatePreview);
-
-    addAddressBtn.addEventListener("click", function () {
-      hasAddress = true;
-      addressTextValue = defaults.contact1;
-      renderAddressEditor();
-      updatePreview();
-    });
-
-    addWebsitesBtn.addEventListener("click", function () {
-      hasWebsites = true;
-      websitesTextValue = defaults.contact3;
-      renderWebsitesEditor();
-      updatePreview();
-    });
 
     addProfileBtn.addEventListener("click", function () {
       hasProfile = true;
@@ -1417,19 +1315,15 @@ function renderTeachingPreview() {
 
     document.getElementById("resetBtn").addEventListener("click", function () {
       nameInput.value = defaults.name;
-      hasAddress = true;
-      addressTextValue = defaults.contact1;
-      hasWebsites = true;
-      websitesTextValue = defaults.contact3;
+      contact1Input.value = defaults.contact1;
       contact2Input.value = defaults.contact2;
+      contact3Input.value = defaults.contact3;
       hasProfile = true;
       profileTextValue = defaults.profile;
       hasPublications = true;
       publicationsTextValue = defaults.publications;
       hasAwards = true;
       awardsTextValue = defaults.awards;
-      renderAddressEditor();
-      renderWebsitesEditor();
       renderProfileEditor();
       renderPublicationsEditor();
       renderAwardsEditor();
@@ -1511,8 +1405,6 @@ function renderTeachingPreview() {
       formPanel.style.cursor = "default";
     });
 
-    renderAddressEditor();
-    renderWebsitesEditor();
     renderProfileEditor();
     renderPublicationsEditor();
     renderAwardsEditor();
