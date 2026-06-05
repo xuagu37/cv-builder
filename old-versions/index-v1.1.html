@@ -94,7 +94,6 @@
 
     .button-row {
       display: flex;
-      flex-wrap: wrap;
       gap: 10px;
       margin-top: 16px;
     }
@@ -281,7 +280,6 @@
     .entry-details {
       font-size: 14px;
       margin: 4px 0 0;
-      white-space: pre-line;
     }
 
     .hint {
@@ -374,7 +372,7 @@
   <div class="app">
     <aside class="form-panel">
       <h2>Academic CV Builder</h2>
-      <div class="builder-meta">Created by 北欧少女莫小贝 · v1.2</div>
+      <div class="builder-meta">Created by 北欧少女莫小贝 · v1.1</div>
       <div class="builder-meta">Contact beioumoxiaobei [at] gmail [dot] com</div>
 
       <div class="form-group">
@@ -467,10 +465,7 @@ Languages: English (fluent), Chinese (native)</textarea>
 
       <div class="button-row">
         <button type="button" id="downloadBtn">Download PDF</button>
-        <button type="button" class="secondary" id="saveBtn">Save</button>
-        <button type="button" class="secondary" id="importBtn">Import</button>
         <button type="button" class="secondary" id="resetBtn">Reset</button>
-        <input id="importFileInput" type="file" accept="application/json,.json" style="display: none;" />
       </div>
     </aside>
 
@@ -827,9 +822,9 @@ Best Student Paper Award, 2023`
         if (match) {
           const label = match[1].trim();
           const url = match[2].trim();
-          return `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(label)}</a>`;
+          return `<a href="${url}" target="_blank" rel="noopener noreferrer">${label}</a>`;
         }
-        return escapeHtml(part);
+        return part;
       }).join(" | ");
     }
 
@@ -852,12 +847,6 @@ Best Student Paper Award, 2023`
         .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;")
         .replaceAll("'", "&#39;");
-    }
-
-    function formatMarkdownInline(text) {
-      return escapeHtml(text)
-        .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
-        .replace(/(^|[^*])\*([^*\n]+?)\*(?!\*)/g, "$1<em>$2</em>");
     }
 
     function renderEducationEditor() {
@@ -892,7 +881,6 @@ Best Student Paper Award, 2023`
             <div class="form-group full-width">
               <label>Details (Optional)</label>
               <textarea data-index="${index}" data-field="details">${escapeHtml(item.details)}</textarea>
-              <div class="hint">Supports basic Markdown: <code>**bold**</code></div>
             </div>
           </div>
           <div class="education-actions">
@@ -945,7 +933,7 @@ Best Student Paper Award, 2023`
           : "";
 
         const detailsHtml = item.details.trim()
-          ? `<p class="entry-details">${formatMarkdownInline(item.details.trim())}</p>`
+          ? `<p class="entry-details">${escapeHtml(item.details.trim())}</p>`
           : "";
 
         entry.innerHTML = `
@@ -1331,154 +1319,6 @@ function renderTeachingPreview() {
       }
     }
 
-
-    function cloneItems(items) {
-      return items.map(item => ({ ...item }));
-    }
-
-    function normalizeBoolean(value, fallback) {
-      return typeof value === "boolean" ? value : fallback;
-    }
-
-    function normalizeText(value, fallback) {
-      return typeof value === "string" ? value : fallback;
-    }
-
-    function normalizeItemList(value, fields, fallback) {
-      if (!Array.isArray(value)) {
-        return cloneItems(fallback);
-      }
-
-      return value.map(item => {
-        const normalized = {};
-        fields.forEach(field => {
-          normalized[field] = item && typeof item[field] === "string" ? item[field] : "";
-        });
-        return normalized;
-      });
-    }
-
-    function getCvData() {
-      return {
-        version: 1,
-        savedAt: new Date().toISOString(),
-        data: {
-          name: nameInput.value,
-          hasAddress,
-          addressTextValue,
-          contact2: contact2Input.value,
-          hasWebsites,
-          websitesTextValue,
-          hasProfile,
-          profileTextValue,
-          hasPublications,
-          publicationsTextValue,
-          hasAwards,
-          awardsTextValue,
-          skills: skillsInput.value,
-          education: cloneItems(educationItems),
-          research: cloneItems(researchItems),
-          teaching: cloneItems(teachingItems),
-          professional: cloneItems(professionalItems)
-        }
-      };
-    }
-
-    function applyCvData(imported) {
-      const source = imported && typeof imported === "object" && imported.data
-        ? imported.data
-        : imported;
-
-      if (!source || typeof source !== "object") {
-        throw new Error("The selected file does not contain CV builder data.");
-      }
-
-      nameInput.value = normalizeText(source.name, defaults.name);
-      hasAddress = normalizeBoolean(source.hasAddress, true);
-      addressTextValue = normalizeText(source.addressTextValue, defaults.contact1);
-      contact2Input.value = normalizeText(source.contact2, defaults.contact2);
-      hasWebsites = normalizeBoolean(source.hasWebsites, true);
-      websitesTextValue = normalizeText(source.websitesTextValue, defaults.contact3);
-      hasProfile = normalizeBoolean(source.hasProfile, true);
-      profileTextValue = normalizeText(source.profileTextValue, defaults.profile);
-      hasPublications = normalizeBoolean(source.hasPublications, true);
-      publicationsTextValue = normalizeText(source.publicationsTextValue, defaults.publications);
-      hasAwards = normalizeBoolean(source.hasAwards, true);
-      awardsTextValue = normalizeText(source.awardsTextValue, defaults.awards);
-      skillsInput.value = normalizeText(source.skills, defaults.skills);
-
-      educationItems = normalizeItemList(
-        source.education,
-        ["school", "location", "degree", "year", "thesis", "details"],
-        defaults.education
-      );
-      researchItems = normalizeItemList(
-        source.research,
-        ["title", "year", "institution", "location", "details"],
-        defaults.research
-      );
-      teachingItems = normalizeItemList(
-        source.teaching,
-        ["title", "year", "institution", "location", "details"],
-        defaults.teaching
-      );
-      professionalItems = normalizeItemList(
-        source.professional,
-        ["title", "year", "institution", "location", "details"],
-        defaults.professional
-      );
-
-      renderAddressEditor();
-      renderWebsitesEditor();
-      renderProfileEditor();
-      renderPublicationsEditor();
-      renderAwardsEditor();
-      renderEducationEditor();
-      renderResearchEditor();
-      renderTeachingEditor();
-      renderProfessionalEditor();
-      updatePreview();
-    }
-
-    function sanitizeFileName(value) {
-      return (value || "CV")
-        .trim()
-        .replace(/[^a-z0-9]+/gi, "-")
-        .replace(/^-+|-+$/g, "") || "CV";
-    }
-
-    function downloadCvData() {
-      const data = getCvData();
-      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = sanitizeFileName(nameInput.value) + "-cv-builder.json";
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      URL.revokeObjectURL(url);
-    }
-
-    function importCvDataFromFile(file) {
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.addEventListener("load", function () {
-        try {
-          const imported = JSON.parse(String(reader.result));
-          applyCvData(imported);
-          alert("CV data imported successfully.");
-        } catch (error) {
-          alert("Import failed: " + error.message);
-        }
-      });
-      reader.addEventListener("error", function () {
-        alert("Import failed: the selected file could not be read.");
-      });
-      reader.readAsText(file);
-    }
-
     nameInput.addEventListener("input", updatePreview);
     contact2Input.addEventListener("input", updatePreview);
     skillsInput.addEventListener("input", updatePreview);
@@ -1573,17 +1413,6 @@ function renderTeachingPreview() {
       const name = nameInput.value.trim() || "CV";
       document.title = name + "-CV";
       window.print();
-    });
-
-    document.getElementById("saveBtn").addEventListener("click", downloadCvData);
-
-    document.getElementById("importBtn").addEventListener("click", function () {
-      document.getElementById("importFileInput").click();
-    });
-
-    document.getElementById("importFileInput").addEventListener("change", function () {
-      importCvDataFromFile(this.files[0]);
-      this.value = "";
     });
 
     document.getElementById("resetBtn").addEventListener("click", function () {
