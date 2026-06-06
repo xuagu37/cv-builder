@@ -34,14 +34,7 @@
     }
 
     .builder-meta + .builder-meta {
-      margin-bottom: 8px;
-    }
-
-    .markdown-help {
-      font-size: 12px;
-      color: #666;
-      margin: 0 0 48px;
-      line-height: 1.4;
+      margin-bottom: 48px; /* adds space before "Name" */
     }
     .app {
       display: flex;
@@ -383,7 +376,6 @@
       <h2>Academic CV Builder</h2>
       <div class="builder-meta">Created by 北欧少女莫小贝 · v1.2</div>
       <div class="builder-meta">Contact beioumoxiaobei [at] gmail [dot] com</div>
-      <div class="markdown-help">Formatting supported globally: <code>**bold**</code> and <code>*italic*</code></div>
 
       <div class="form-group">
         <label for="nameInput">Name</label>
@@ -557,7 +549,7 @@ Languages: English (fluent), Chinese (native)`,
           degree: "MSc in Computer Science",
           year: "2022–2024",
           thesis: "WulinGPT: A Domain-Specific LLM for Martial Arts Culture",
-          details: "Relevant coursework: Machine Learning, Statistics, Scientific Computing"
+          details: "Relevant coursework: Machine Learning, Statistics, Scientific Computing\n**Bold font**: *Italic*"
         },
         {
           school: "Clayton University",
@@ -824,7 +816,7 @@ Best Student Paper Award, 2023`
     }
 
     function updateText(inputEl, previewEl, fallback) {
-      previewEl.innerHTML = formatMarkdownInline(inputEl.value.trim() || fallback);
+      previewEl.textContent = inputEl.value.trim() || fallback;
     }
 
     function formatLinks(text) {
@@ -835,9 +827,9 @@ Best Student Paper Award, 2023`
         if (match) {
           const label = match[1].trim();
           const url = match[2].trim();
-          return `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">${formatMarkdownInline(label)}</a>`;
+          return `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(label)}</a>`;
         }
-        return formatMarkdownInline(part);
+        return escapeHtml(part);
       }).join(" | ");
     }
 
@@ -848,7 +840,7 @@ Best Student Paper Award, 2023`
       previewSkills.innerHTML = "";
       lines.forEach(line => {
         const li = document.createElement("li");
-        li.innerHTML = formatMarkdownInline(line);
+        li.textContent = line;
         previewSkills.appendChild(li);
       });
     }
@@ -949,7 +941,7 @@ Best Student Paper Award, 2023`
         entry.className = "entry";
 
         const thesisHtml = item.thesis && item.thesis.trim()
-          ? `<p class="entry-details"><strong>Thesis:</strong> ${formatMarkdownInline(item.thesis.trim())}</p>`
+          ? `<p class="entry-details"><strong>Thesis:</strong> ${escapeHtml(item.thesis.trim())}</p>`
           : "";
 
         const detailsHtml = item.details.trim()
@@ -958,12 +950,12 @@ Best Student Paper Award, 2023`
 
         entry.innerHTML = `
           <div class="entry-top">
-            <div class="entry-left">${formatMarkdownInline(item.school.trim() || "Clayton University")}</div>
-            <div class="entry-right">${formatMarkdownInline(item.location.trim() || "City, Country")}</div>
+            <div class="entry-left">${escapeHtml(item.school.trim() || "Clayton University")}</div>
+            <div class="entry-right">${escapeHtml(item.location.trim() || "City, Country")}</div>
           </div>
           <div class="entry-sub">
-            <div>${formatMarkdownInline(item.degree.trim() || "Degree")}</div>
-            <div>${formatMarkdownInline(item.year.trim() || "Years")}</div>
+            <div>${escapeHtml(item.degree.trim() || "Degree")}</div>
+            <div>${escapeHtml(item.year.trim() || "Years")}</div>
           </div>
           ${thesisHtml}
           ${detailsHtml}
@@ -1057,12 +1049,12 @@ Best Student Paper Award, 2023`
 
         entry.innerHTML = `
           <div class="entry-top">
-            <div class="entry-left">${formatMarkdownInline(item.title.trim() || "Research Title")}</div>
-            <div class="entry-right">${formatMarkdownInline(item.year.trim() || "Years")}</div>
+            <div class="entry-left">${escapeHtml(item.title.trim() || "Research Title")}</div>
+            <div class="entry-right">${escapeHtml(item.year.trim() || "Years")}</div>
           </div>
           <div class="entry-sub">
-            <div>${formatMarkdownInline(item.institution.trim() || "Institution")}</div>
-            <div>${formatMarkdownInline(item.location.trim() || "Location")}</div>
+            <div>${escapeHtml(item.institution.trim() || "Institution")}</div>
+            <div>${escapeHtml(item.location.trim() || "Location")}</div>
           </div>
           ${detailsHtml}
         `;
@@ -1100,7 +1092,6 @@ Best Student Paper Award, 2023`
             <div class="form-group full-width">
               <label>Details</label>
               <textarea data-index="${index}" data-field="details">${escapeHtml(item.details)}</textarea>
-              <div class="hint">Supports basic Markdown: <code>**bold**</code> and <code>*italic*</code></div>
             </div>
           </div>
           <div class="education-actions">
@@ -1163,7 +1154,6 @@ Best Student Paper Award, 2023`
             <div class="form-group full-width">
               <label>Details</label>
               <textarea data-index="${index}" data-field="details">${escapeHtml(item.details)}</textarea>
-              <div class="hint">Supports basic Markdown: <code>**bold**</code> and <code>*italic*</code></div>
             </div>
           </div>
           <div class="education-actions">
@@ -1218,12 +1208,12 @@ Best Student Paper Award, 2023`
 
         entry.innerHTML = `
           <div class="entry-top">
-            <div class="entry-left">${formatMarkdownInline(item.title.trim() || "Position")}</div>
-            <div class="entry-right">${formatMarkdownInline(item.year.trim() || "Years")}</div>
+            <div class="entry-left">${escapeHtml(item.title.trim() || "Position")}</div>
+            <div class="entry-right">${escapeHtml(item.year.trim() || "Years")}</div>
           </div>
           <div class="entry-sub">
-            <div>${formatMarkdownInline(item.institution.trim() || "Organization")}</div>
-            <div>${formatMarkdownInline(item.location.trim() || "Location")}</div>
+            <div>${escapeHtml(item.institution.trim() || "Organization")}</div>
+            <div>${escapeHtml(item.location.trim() || "Location")}</div>
           </div>
           ${detailsHtml}
         `;
@@ -1256,12 +1246,12 @@ function renderTeachingPreview() {
 
         entry.innerHTML = `
           <div class="entry-top">
-            <div class="entry-left">${formatMarkdownInline(item.title.trim() || "Teaching Title, Course Title")}</div>
-            <div class="entry-right">${formatMarkdownInline(item.year.trim() || "Years")}</div>
+            <div class="entry-left">${escapeHtml(item.title.trim() || "Teaching Title, Course Title")}</div>
+            <div class="entry-right">${escapeHtml(item.year.trim() || "Years")}</div>
           </div>
           <div class="entry-sub">
-            <div>${formatMarkdownInline(item.institution.trim() || "Institution")}</div>
-            <div>${formatMarkdownInline(item.location.trim() || "City, Country")}</div>
+            <div>${escapeHtml(item.institution.trim() || "Institution")}</div>
+            <div>${escapeHtml(item.location.trim() || "City, Country")}</div>
           </div>
           ${detailsHtml}
         `;
@@ -1278,7 +1268,7 @@ function renderTeachingPreview() {
       previewPublications.innerHTML = "";
       lines.forEach(line => {
         const li = document.createElement("li");
-        li.innerHTML = formatMarkdownInline(line);
+        li.textContent = line;
         previewPublications.appendChild(li);
       });
     }
@@ -1291,7 +1281,7 @@ function renderTeachingPreview() {
       previewAwards.innerHTML = "";
       lines.forEach(line => {
         const li = document.createElement("li");
-        li.innerHTML = formatMarkdownInline(line);
+        li.textContent = line;
         previewAwards.appendChild(li);
       });
     }
@@ -1299,7 +1289,7 @@ function renderTeachingPreview() {
     function updatePreview() {
       updateText(nameInput, previewName, defaults.name);
       if (hasAddress && addressTextValue.trim()) {
-        previewContact1.innerHTML = formatMarkdownInline(addressTextValue.trim());
+        previewContact1.textContent = addressTextValue.trim();
         previewContact1.style.display = "";
       } else {
         previewContact1.style.display = "none";
@@ -1313,7 +1303,7 @@ function renderTeachingPreview() {
       }
       const profileText = hasProfile ? profileTextValue.trim() : "";
       if (profileText) {
-        previewProfile.innerHTML = formatMarkdownInline(profileText);
+        previewProfile.textContent = profileText;
         document.getElementById("profileSection").style.display = "";
       } else {
         document.getElementById("profileSection").style.display = "none";
