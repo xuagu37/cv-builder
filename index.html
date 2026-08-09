@@ -381,7 +381,7 @@
   <div class="app">
     <aside class="form-panel">
       <h2>Academic CV Builder</h2>
-      <div class="builder-meta">Created by 北欧少女莫小贝 · v1.2</div>
+      <div class="builder-meta">Created by 北欧少女莫小贝 · v1.4</div>
       <div class="builder-meta">Contact beioumoxiaobei [at] gmail [dot] com</div>
       <div class="markdown-help">Formatting supported globally: <code>**bold**</code> and <code>*italic*</code></div>
 
@@ -556,6 +556,7 @@ Languages: English (fluent), Chinese (native)`,
           location: "City, Country",
           degree: "MSc in Computer Science",
           year: "2022–2024",
+          hasThesis: true,
           thesis: "WulinGPT: A Domain-Specific LLM for Martial Arts Culture",
           details: "Relevant coursework: Machine Learning, Statistics, Scientific Computing"
         },
@@ -564,8 +565,9 @@ Languages: English (fluent), Chinese (native)`,
           location: "City, Country",
           degree: "BSc in Computer Science",
           year: "2018–2022",
+          hasThesis: true,
           thesis: "Title of thesis",
-        details: ""
+          details: ""
         }
       ],
       research: [
@@ -874,6 +876,22 @@ Best Student Paper Award, 2023`
       educationItems.forEach((item, index) => {
         const card = document.createElement("div");
         card.className = "education-card";
+        const hasThesis = item.hasThesis !== false;
+        const thesisEditorHtml = hasThesis
+          ? `
+            <div class="form-group full-width">
+              <label>Thesis</label>
+              <input type="text" data-index="${index}" data-field="thesis" placeholder="Title of thesis" value="${escapeHtml(item.thesis || "")}" />
+              <div class="education-actions">
+                <button type="button" class="secondary remove-thesis-btn" data-index="${index}">Remove Thesis</button>
+              </div>
+            </div>
+          `
+          : `
+            <div class="form-group full-width">
+              <button type="button" class="secondary add-thesis-btn" data-index="${index}">+ Add Thesis</button>
+            </div>
+          `;
         card.innerHTML = `
           <h3>Education ${index + 1}</h3>
           <div class="education-grid">
@@ -893,10 +911,7 @@ Best Student Paper Award, 2023`
               <label>Years</label>
               <input type="text" data-index="${index}" data-field="year" value="${escapeHtml(item.year)}" />
             </div>
-            <div class="form-group full-width">
-              <label>Thesis</label>
-              <input type="text" data-index="${index}" data-field="thesis" placeholder="Title of thesis" value="${escapeHtml(item.thesis || "")}" />
-            </div>
+            ${thesisEditorHtml}
             <div class="form-group full-width">
               <label>Details (Optional)</label>
               <textarea data-index="${index}" data-field="details">${escapeHtml(item.details)}</textarea>
@@ -918,6 +933,30 @@ Best Student Paper Award, 2023`
           renderEducationEditor();
           updatePreview();
       
+        });
+      });
+
+      const removeThesisButtons = educationEditor.querySelectorAll(".remove-thesis-btn");
+      removeThesisButtons.forEach(button => {
+        button.addEventListener("click", function () {
+          const index = Number(this.dataset.index);
+          educationItems[index].hasThesis = false;
+          educationItems[index].thesis = "";
+          renderEducationEditor();
+          updatePreview();
+        });
+      });
+
+      const addThesisButtons = educationEditor.querySelectorAll(".add-thesis-btn");
+      addThesisButtons.forEach(button => {
+        button.addEventListener("click", function () {
+          const index = Number(this.dataset.index);
+          educationItems[index].hasThesis = true;
+          if (!educationItems[index].thesis) {
+            educationItems[index].thesis = "Title of thesis";
+          }
+          renderEducationEditor();
+          updatePreview();
         });
       });
 
@@ -948,7 +987,7 @@ Best Student Paper Award, 2023`
         const entry = document.createElement("div");
         entry.className = "entry";
 
-        const thesisHtml = item.thesis && item.thesis.trim()
+        const thesisHtml = item.hasThesis !== false && item.thesis && item.thesis.trim()
           ? `<p class="entry-details"><strong>Thesis:</strong> ${formatMarkdownInline(item.thesis.trim())}</p>`
           : "";
 
@@ -1360,9 +1399,17 @@ function renderTeachingPreview() {
         return cloneItems(fallback);
       }
 
-      return value.map(item => {
+      return value.map((item, index) => {
         const normalized = {};
+        const fallbackItem = fallback[index] || fallback[0] || {};
         fields.forEach(field => {
+          const fallbackValue = fallbackItem[field];
+
+          if (typeof fallbackValue === "boolean") {
+            normalized[field] = normalizeBoolean(item && item[field], fallbackValue);
+            return;
+          }
+
           normalized[field] = item && typeof item[field] === "string" ? item[field] : "";
         });
         return normalized;
@@ -1420,7 +1467,7 @@ function renderTeachingPreview() {
 
       educationItems = normalizeItemList(
         source.education,
-        ["school", "location", "degree", "year", "thesis", "details"],
+        ["school", "location", "degree", "year", "hasThesis", "thesis", "details"],
         defaults.education
       );
       researchItems = normalizeItemList(
@@ -1572,6 +1619,7 @@ function renderTeachingPreview() {
         location: "",
         degree: "",
         year: "",
+        hasThesis: true,
         thesis: "Title of thesis",
         details: ""
       });
