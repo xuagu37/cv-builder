@@ -503,7 +503,7 @@ Languages: English (fluent), Chinese (native)</textarea>
           <div id="previewEducation"></div>
         </section>
 
-        <section class="section">
+        <section class="section" id="researchSection">
           <div class="section-title">Research Experience</div>
           <div id="previewResearch"></div>
         </section>
@@ -1075,12 +1075,11 @@ Best Student Paper Award, 2023`
       previewResearch.innerHTML = "";
 
       if (!researchItems.length) {
-        const empty = document.createElement("p");
-        empty.className = "education-empty";
-        empty.textContent = "Add a research entry from the form panel.";
-        previewResearch.appendChild(empty);
+        document.getElementById("researchSection").style.display = "none";
         return;
       }
+
+      document.getElementById("researchSection").style.display = "";
 
       researchItems.forEach(item => {
         const entry = document.createElement("div");
